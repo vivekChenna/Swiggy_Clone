@@ -1,24 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Navbar from "./Components/Navbar";
+import Card from "./Components/Card";
+
+import Carousel from "./Components/Carousel";
+
+import Context from "./Context/UseContext";
+
+import { useEffect, useState } from "react";
 
 function App() {
+  const [restaurantList, setRestaurantList] = useState([]);
+  const [filterRestaurant, setFilterRestaurant] = useState([]);
+
+  const [carouselData, setCarouselData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const data = await fetch(
+      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&page_type=DESKTOP_WEB_LISTING"
+    );
+
+    const result = await data.json();
+
+    console.log("printing the result");
+    console.log(result);
+
+    const FinalList = result.data.cards.find((element) => {
+      return element.cardType === "seeAllRestaurants";
+    });
+
+    const carousel = result.data.cards.find((element) => {
+      return element.cardType === "carousel";
+    });
+
+    setCarouselData(carousel.data.data.cards);
+    console.log("printing carousel data");
+    console.log(carousel.data.data.cards);
+
+    console.log(FinalList.data.data.cards);
+
+    setRestaurantList(FinalList.data.data.cards);
+    setFilterRestaurant(FinalList.data.data.cards);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Context.Provider
+      value={{
+        restaurantList,
+        setRestaurantList,
+        filterRestaurant,
+        carouselData,
+        setCarouselData,
+      }}
+    >
+      <Navbar />
+
+      {carouselData.length > 0 ? <Carousel /> : null}
+      <Card />
+    </Context.Provider>
   );
 }
 
