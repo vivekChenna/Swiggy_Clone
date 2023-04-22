@@ -1,6 +1,7 @@
 import "./App.css";
 import Navbar from "./Components/Navbar";
 import Card from "./Components/Card";
+import Body from "./Components/Body";
 
 import Carousel from "./Components/Carousel";
 
@@ -57,9 +58,7 @@ function App() {
       }}
     >
       <Navbar />
-
-      {carouselData.length > 0 ? <Carousel /> : null}
-      <Card />
+      <Body />
     </Context.Provider>
   );
 }
